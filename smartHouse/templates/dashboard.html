@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Home Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f4f6f9;
+            font-family: 'Arial', sans-serif;
+        }
+        .dashboard-card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+        .dashboard-card:hover {
+            transform: scale(1.02);
+        }
+        .card-header {
+            background-color: #007bff;
+            color: white;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+        .led-control-btn {
+            margin: 5px;
+            width: 120px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid py-4">
+        <h1 class="text-center mb-4">Smart Home Control Center</h1>
+        
+        <div class="row">
+            <div class="col-md-6 col-lg-4">
+                <div class="dashboard-card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">LED Control</h5>
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <div class="card-body text-center">
+                        <div class="btn-group" role="group" aria-label="LED Controls">
+                            <button onclick="controlLED('on')" class="btn btn-success led-control-btn">
+                                <i class="fas fa-power-off me-2"></i>Turn ON
+                            </button>
+                            <button onclick="controlLED('off')" class="btn btn-danger led-control-btn">
+                                <i class="fas fa-power-off me-2"></i>Turn OFF
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Placeholder for additional smart home controls -->
+            <div class="col-md-6 col-lg-4">
+                <div class="dashboard-card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Temperature</h5>
+                        <i class="fas fa-thermometer-half"></i>
+                    </div>
+                    <div class="card-body text-center">
+                        <p class="display-6" id="temperatureDisplay">-- °C</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function controlLED(state) {
+            fetch('/led', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'state=' + state
+            }).then(response => {
+                console.log('LED ' + state);
+                // Optional: Add visual feedback
+                alert('LED turned ' + state.toUpperCase());
+            }).catch(error => {
+                console.error('Error:', error);
+                alert('Failed to control LED');
+            });
+        }
+
+        // Placeholder for temperature update (you'd replace this with actual data fetching)
+        function updateTemperature() {
+            // Simulated temperature update
+            document.getElementById('temperatureDisplay').textContent = '22.5 °C';
+        }
+        
+        // Update temperature on page load
+        updateTemperature();
+    </script>
+
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+</body>
+</html>
