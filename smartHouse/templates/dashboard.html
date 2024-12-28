@@ -20,10 +20,6 @@
             text-align: center;
             border-bottom: 3px solid #0056b3;
         }
-        .dashboard-header h1 {
-            margin: 0;
-            font-size: 2rem;
-        }
         .dashboard-container {
             max-width: 1200px;
             margin: 30px auto;
@@ -46,9 +42,6 @@
             padding: 15px;
             text-align: center;
         }
-        .card-header h5 {
-            margin: 0;
-        }
         .card-body {
             text-align: center;
             padding: 20px;
@@ -57,19 +50,6 @@
             font-size: 2rem;
             font-weight: bold;
             color: #333;
-        }
-        .footer {
-            text-align: center;
-            margin-top: 50px;
-            font-size: 0.9rem;
-            color: #666;
-        }
-        .footer a {
-            color: #007bff;
-            text-decoration: none;
-        }
-        .footer a:hover {
-            text-decoration: underline;
         }
     </style>
 </head>
@@ -82,6 +62,19 @@
     <!-- Dashboard Container -->
     <div class="dashboard-container">
         <div class="row g-4">
+            <!-- Distance Sensor -->
+            <div class="col-md-6 col-lg-4">
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h5>Distance Sensor</h5>
+                        <i class="fas fa-ruler-horizontal fa-2x text-secondary"></i>
+                    </div>
+                    <div class="card-body">
+                        <p class="status-display" id="distanceDisplay">-- cm</p>
+                    </div>
+                </div>
+            </div>
+
             <!-- LED Control -->
             <div class="col-md-6 col-lg-4">
                 <div class="dashboard-card">
@@ -99,34 +92,22 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Door Control -->
-            <div class="col-md-6 col-lg-4">
-                <div class="dashboard-card">
-                    <div class="card-header">
-                        <h5>Door Control</h5>
-                        <i id="doorIcon" class="fas fa-door-closed fa-2x text-secondary"></i>
-                    </div>
-                    <div class="card-body">
-                        <button onclick="controlDoor('open')" class="btn btn-primary">
-                            <i class="fas fa-door-open"></i> Open Door
-                        </button>
-                        <button onclick="controlDoor('close')" class="btn btn-secondary">
-                            <i class="fas fa-door-closed"></i> Close Door
-                        </button>
-                    </div>
-                </div>
-            </div>
         </div>
-    </div>
-
-    <!-- Footer -->
-    <div class="footer">
-        <p>Smart Home Dashboard © 2024. Made with ❤️ by <a href="#">Your Name</a>.</p>
     </div>
 
     <!-- JavaScript -->
     <script>
+        // Fetch distance data every second
+        function updateDistance() {
+            fetch('/distance')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('distanceDisplay').textContent = data.distance;
+                })
+                .catch(error => console.error('Error fetching distance:', error));
+        }
+
+        // Control LED
         function controlLED(state) {
             fetch('/led', {
                 method: 'POST',
@@ -143,37 +124,14 @@
                     ledIcon.classList.add('text-secondary');
                 }
             }).catch(error => {
-                console.error('Error:', error);
-                alert('Failed to control LED');
+                console.error('Error controlling LED:', error);
             });
         }
 
-        function controlDoor(action) {
-            fetch('/door', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: 'action=' + action
-            }).then(response => {
-                console.log('Door ' + action);
-                const doorIcon = document.getElementById('doorIcon');
-                if (action === 'open') {
-                    doorIcon.classList.remove('fa-door-closed');
-                    doorIcon.classList.add('fa-door-open');
-                    doorIcon.classList.add('text-success');
-                } else {
-                    doorIcon.classList.remove('fa-door-open');
-                    doorIcon.classList.add('fa-door-closed');
-                    doorIcon.classList.remove('text-success');
-                }
-            }).catch(error => {
-                console.error('Error:', error);
-                alert('Failed to control door');
-            });
-        }
+        // Update distance every second
+        setInterval(updateDistance, 1000);
     </script>
-
     <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
 </body>
 </html>
